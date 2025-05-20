@@ -2,7 +2,7 @@
 This repository contains official implementation for the paper titled "LKCA-Net: Hybrid Large Kernel and Clustering Attention Network for Medical Image Segmentation" 
 
 > **Architecture**
-![Method](figure/net.jpg)
+![Method](./figure/net.jpg)
 
 ## 1. Prepare data
 
