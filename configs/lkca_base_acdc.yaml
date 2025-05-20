@@ -1,0 +1,13 @@
+
+Params:
+  img_size: 256
+  num_classes: 4
+  clusters: [4, 4, 4, 4]
+  dims: [96, 192, 384, 768]
+  depths: [2, 4, 8, 2]
+  expansion: [4, 4, 4, 4]
+  heads: [4, 4, 8, 16]
+  kernel0: [ 5, 5, 5, 5 ]
+  kernel1: [ 7, 7, 7, 7 ]
+  dilation: [ 1, 1, 1, 1 ]
+  deep_supervision: True
