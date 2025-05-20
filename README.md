@@ -65,7 +65,7 @@ python test.py --cfg configs/lalk_base_synapse_pretrained.yaml
 
 
 
-## ISIC 2017  & ISIC2017
+## ISIC 2017  & ISIC2018
 
 Run the code below to train Net on the ISIC dataset.
 
