@@ -216,25 +216,35 @@ class ChannelAttentionCBAM(nn.Module):
 #         return x_out
 
 class MultiDWConv(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    """
+    Wide-Focus module.
+    """
+
+    def __init__(self,
+                 in_channels,
+                 out_channels):
         super().__init__()
-        assert in_channels % 3 == 0, "in_channels must be divisible by 3"
-        self.conv1 = nn.Conv2d(in_channels // 3, out_channels, 3, padding="same", groups=1)  # 分组改为1
-        self.conv2 = nn.Conv2d(in_channels // 3, out_channels, 3, padding="same", dilation=2, groups=1)
-        self.conv3 = nn.Conv2d(in_channels // 3, out_channels, 3, padding="same", dilation=3, groups=1)
-        self.mix = nn.Sequential(
-            nn.Conv2d(out_channels, out_channels, 1),
-            nn.GELU(),
-            nn.Dropout(0.1)
-        )
+        self.conv1=  nn.Conv2d(in_channels, out_channels, 3, 1, padding="same",groups=in_channels)
+        self.conv2 = nn.Conv2d(in_channels, out_channels, 3, 1, padding="same", dilation=2,groups=in_channels)
+        self.conv3 = nn.Conv2d(in_channels, out_channels, 3, 1, padding="same", dilation=3,groups=in_channels)
+        self.conv4 = nn.Conv2d(in_channels, out_channels, 3, 1, padding="same")
 
     def forward(self, x):
-        x1, x2, x3 = torch.chunk(x, 3, dim=1)
-        x1 = F.gelu(self.conv1(x1))
-        x2 = F.gelu(self.conv2(x2))
-        x3 = F.gelu(self.conv3(x3))
-        added = x1 + x2 + x3  # 更简洁的加法
-        return self.mix(added)
+        x1 = self.conv1(x)
+        x1 = F.gelu(x1)
+        x1 = F.dropout(x1, 0.1)
+        x2 = self.conv2(x)
+        x2 = F.gelu(x2)
+        x2 = F.dropout(x2, 0.1)
+        x3=self.conv3(x)
+        x3=F.gelu(x3)
+        x3=F.dropout(x3, 0.1)
+        added = torch.add(x1, x2)
+        added = torch.add(added, x3)
+        x_out = self.conv4(added)
+        x_out = F.gelu(x_out)
+        x_out = F.dropout(x_out, 0.1)
+        return x_out
 
 class deformable_LKA(nn.Module):
     def __init__(self, dim, kernel0, kernel1, dilation):
